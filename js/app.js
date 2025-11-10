@@ -4,14 +4,14 @@
  */
 
 import { CryptoDataService } from './cryptoDataService.js';
-import { DeepSeekService } from './deepseekService.js';
+import { LLMService } from './llmService.js';
 import { TradingEngine } from './tradingEngine.js';
 import { TradingBot } from './tradingBot.js';
 
 class App {
     constructor() {
         this.cryptoDataService = new CryptoDataService();
-        this.deepseekService = null;
+        this.llmService = null;
         this.tradingEngine = null;
         this.tradingBot = null;
         this.priceChart = null;
@@ -53,7 +53,11 @@ class App {
     cacheElements() {
         this.elements = {
             // Config inputs
-            deepseekApiKey: document.getElementById('deepseek-api-key'),
+            llmProvider: document.getElementById('llm-provider'),
+            apiKey: document.getElementById('api-key'),
+            providerInfo: document.getElementById('provider-info'),
+            providerLink: document.getElementById('provider-link'),
+            apiKeyHelp: document.getElementById('api-key-help'),
             startingBalance: document.getElementById('starting-balance'),
             tradingInterval: document.getElementById('trading-interval'),
             maxLeverage: document.getElementById('max-leverage'),
@@ -84,6 +88,9 @@ class App {
      * Set up event listeners
      */
     setupEventListeners() {
+        // Provider selection change
+        this.elements.llmProvider.addEventListener('change', () => this.updateProviderInfo());
+
         // Start button
         this.elements.startBtn.addEventListener('click', () => this.startBot());
 
@@ -97,6 +104,55 @@ class App {
 
         // Save state on changes
         this.elements.startingBalance.addEventListener('change', () => this.saveState());
+        this.elements.llmProvider.addEventListener('change', () => this.saveState());
+
+        // Initialize provider info
+        this.updateProviderInfo();
+    }
+
+    /**
+     * Update provider information display
+     */
+    updateProviderInfo() {
+        const provider = this.elements.llmProvider.value;
+        const providerUrls = {
+            deepseek: 'https://platform.deepseek.com',
+            openrouter: 'https://openrouter.ai',
+            groq: 'https://console.groq.com',
+            together: 'https://together.ai',
+            ollama: 'https://ollama.com'
+        };
+
+        const providerTexts = {
+            deepseek: 'Get free 1M tokens at ',
+            openrouter: 'Get FREE API key at ',
+            groq: 'Get FREE API key at ',
+            together: 'Get free credits at ',
+            ollama: 'Install locally from '
+        };
+
+        const providerNames = {
+            deepseek: 'platform.deepseek.com',
+            openrouter: 'openrouter.ai',
+            groq: 'console.groq.com',
+            together: 'together.ai',
+            ollama: 'ollama.com'
+        };
+
+        this.elements.providerLink.href = providerUrls[provider];
+        this.elements.providerLink.textContent = providerNames[provider];
+        this.elements.providerInfo.innerHTML = `${providerTexts[provider]}<a href="${providerUrls[provider]}" target="_blank">${providerNames[provider]}</a>`;
+
+        // Update API key field
+        if (provider === 'ollama') {
+            this.elements.apiKey.disabled = true;
+            this.elements.apiKey.placeholder = 'Not required for local Ollama';
+            this.elements.apiKeyHelp.textContent = 'Run: ollama serve (then ollama pull deepseek-r1:7b)';
+        } else {
+            this.elements.apiKey.disabled = false;
+            this.elements.apiKey.placeholder = 'sk-...';
+            this.elements.apiKeyHelp.textContent = `Sign up to get your FREE API key`;
+        }
     }
 
     /**
@@ -167,11 +223,14 @@ class App {
      */
     async startBot() {
         try {
-            // Validate inputs
-            const apiKey = this.elements.deepseekApiKey.value.trim();
-            if (!apiKey) {
+            // Get provider and API key
+            const provider = this.elements.llmProvider.value;
+            const apiKey = this.elements.apiKey.value.trim();
+
+            // Validate inputs (API key not needed for Ollama)
+            if (provider !== 'ollama' && !apiKey) {
                 this.addLogEntry({
-                    message: 'Please enter your DeepSeek API key',
+                    message: `Please enter your ${provider} API key`,
                     type: 'error',
                     timestamp: Date.now()
                 });
@@ -182,19 +241,22 @@ class App {
             this.elements.startBtn.disabled = true;
             this.elements.startBtn.textContent = 'Starting...';
 
-            // Initialize services
-            this.deepseekService = new DeepSeekService(apiKey);
+            // Initialize LLM service
+            this.llmService = new LLMService({
+                provider: provider,
+                apiKey: apiKey
+            });
 
-            // Validate API key
+            // Validate API connection
             this.addLogEntry({
-                message: 'Validating DeepSeek API key...',
+                message: `Validating ${provider} connection...`,
                 type: 'info',
                 timestamp: Date.now()
             });
 
-            const isValid = await this.deepseekService.validateApiKey();
+            const isValid = await this.llmService.validateApiKey();
             if (!isValid) {
-                throw new Error('Invalid DeepSeek API key. Please check your API key and try again.');
+                throw new Error(`Failed to connect to ${provider}. Please check your API key${provider === 'ollama' ? ' and ensure Ollama is running (ollama serve)' : ''}.`);
             }
 
             // Initialize trading engine
@@ -210,7 +272,7 @@ class App {
             };
 
             this.tradingBot = new TradingBot(
-                this.deepseekService,
+                this.llmService,
                 this.cryptoDataService,
                 this.tradingEngine,
                 config
@@ -521,6 +583,7 @@ class App {
      */
     saveState() {
         const state = {
+            llmProvider: this.elements.llmProvider.value,
             startingBalance: this.elements.startingBalance.value,
             tradingInterval: this.elements.tradingInterval.value,
             maxLeverage: this.elements.maxLeverage.value,
@@ -540,6 +603,7 @@ class App {
         try {
             const state = JSON.parse(savedState);
 
+            if (state.llmProvider) this.elements.llmProvider.value = state.llmProvider;
             if (state.startingBalance) this.elements.startingBalance.value = state.startingBalance;
             if (state.tradingInterval) this.elements.tradingInterval.value = state.tradingInterval;
             if (state.maxLeverage) this.elements.maxLeverage.value = state.maxLeverage;

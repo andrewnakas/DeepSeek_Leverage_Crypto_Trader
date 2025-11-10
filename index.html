@@ -19,9 +19,20 @@
             <h2>Configuration</h2>
             <div class="config-grid">
                 <div class="config-item">
-                    <label for="deepseek-api-key">DeepSeek API Key:</label>
-                    <input type="password" id="deepseek-api-key" placeholder="sk-...">
-                    <small>Get your key at <a href="https://platform.deepseek.com/" target="_blank">platform.deepseek.com</a></small>
+                    <label for="llm-provider">AI Provider (FREE options available!):</label>
+                    <select id="llm-provider">
+                        <option value="deepseek">DeepSeek (Free 1M tokens)</option>
+                        <option value="openrouter" selected>OpenRouter (FREE - Recommended!)</option>
+                        <option value="groq">Groq (FREE - Super Fast!)</option>
+                        <option value="together">Together.ai (Free credits)</option>
+                        <option value="ollama">Ollama (100% FREE Local)</option>
+                    </select>
+                    <small id="provider-info">Get free API key at <a href="https://openrouter.ai" target="_blank" id="provider-link">openrouter.ai</a></small>
+                </div>
+                <div class="config-item">
+                    <label for="api-key">API Key:</label>
+                    <input type="password" id="api-key" placeholder="sk-...">
+                    <small id="api-key-help">No API key needed for Ollama (local)</small>
                 </div>
                 <div class="config-item">
                     <label for="starting-balance">Starting Balance (USDT):</label>

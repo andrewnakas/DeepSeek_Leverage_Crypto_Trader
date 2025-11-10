@@ -2,6 +2,16 @@
 
 An AI-powered cryptocurrency trading bot that uses DeepSeek LLM for market analysis and executes leveraged long/short positions in a fully simulated environment with real-time crypto market data.
 
+## 🎁 100% FREE TO USE!
+
+This bot supports **multiple FREE AI providers** - no payment required!
+- **OpenRouter**: Free API key + 1M tokens (Recommended!)
+- **Groq**: Completely free with ultra-fast responses
+- **DeepSeek**: Free 1M tokens + $5 credit
+- **Ollama**: 100% FREE forever - runs locally!
+
+**[📖 See FREE Setup Guide →](FREE_SETUP.md)**
+
 ## Features
 
 ### 🤖 AI-Powered Analysis
@@ -55,8 +65,14 @@ An AI-powered cryptocurrency trading bot that uses DeepSeek LLM for market analy
 ## Getting Started
 
 ### Prerequisites
-- DeepSeek API Key (get one at [platform.deepseek.com](https://platform.deepseek.com))
+- **FREE AI API Key** from one of:
+  - OpenRouter (Recommended): [openrouter.ai](https://openrouter.ai) - Instant, no credit card
+  - Groq: [console.groq.com](https://console.groq.com) - Super fast & free
+  - DeepSeek: [platform.deepseek.com](https://platform.deepseek.com) - Free 1M tokens
+  - **OR** Ollama: [ollama.com](https://ollama.com) - 100% free local (no API key!)
 - Modern web browser with JavaScript enabled
+
+**[📖 Detailed FREE Setup Guide](FREE_SETUP.md)** - Choose your free provider!
 
 ### Installation
 
@@ -74,17 +90,25 @@ An AI-powered cryptocurrency trading bot that uses DeepSeek LLM for market analy
      # Then visit http://localhost:8000
      ```
 
-3. **Configure the bot**
-   - Enter your DeepSeek API key
+3. **Get FREE API Key** (30 seconds)
+   - **Easiest:** OpenRouter - Sign up at [openrouter.ai](https://openrouter.ai), get instant free key
+   - **Fastest:** Groq - Sign up at [console.groq.com](https://console.groq.com)
+   - **Local:** Install Ollama from [ollama.com](https://ollama.com) (no API key needed!)
+   - [See detailed guide](FREE_SETUP.md)
+
+4. **Configure the bot**
+   - Select AI provider from dropdown (OpenRouter recommended)
+   - Enter your API key (or skip for Ollama)
    - Set starting balance (default: $10,000 USDT)
    - Configure analysis interval (5, 15, 30, or 60 minutes)
    - Set maximum leverage (2x to 100x)
    - Set risk percentage per trade (1-25%)
 
-4. **Start trading**
+5. **Start trading**
    - Click "Start Trading Bot"
    - Monitor AI analysis and trading activity
    - Watch your portfolio grow (or learn from losses!)
+   - **All FREE with your chosen provider!**
 
 ## Live Demo
 

@@ -6,8 +6,8 @@
 import { TechnicalAnalysis } from './technicalAnalysis.js';
 
 export class TradingBot {
-    constructor(deepseekService, cryptoDataService, tradingEngine, config = {}) {
-        this.deepseekService = deepseekService;
+    constructor(llmService, cryptoDataService, tradingEngine, config = {}) {
+        this.llmService = llmService;
         this.cryptoDataService = cryptoDataService;
         this.tradingEngine = tradingEngine;
 
@@ -147,14 +147,14 @@ export class TradingBot {
     }
 
     /**
-     * Get AI analysis from DeepSeek
+     * Get AI analysis from LLM
      */
     async getAIAnalysis(marketData, coinAnalyses, globalData) {
         try {
             // Prepare data for AI
             const firstCoinAnalysis = coinAnalyses[0];
 
-            const analysis = await this.deepseekService.analyzeMarket(
+            const analysis = await this.llmService.analyzeMarket(
                 marketData,
                 firstCoinAnalysis.historicalData,
                 firstCoinAnalysis.indicators,
