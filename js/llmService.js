@@ -31,7 +31,7 @@ export class LLMService {
     getDefaultModel() {
         const models = {
             deepseek: 'deepseek-chat',
-            openrouter: 'deepseek/deepseek-chat', // Free on OpenRouter
+            openrouter: 'deepseek/deepseek-r1', // DeepSeek R1 reasoning model - FREE on OpenRouter!
             groq: 'llama-3.3-70b-versatile', // Fast and free
             together: 'meta-llama/Llama-3-70b-chat-hf',
             ollama: 'deepseek-r1:7b' // Local model
