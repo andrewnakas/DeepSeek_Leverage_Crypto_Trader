@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>OpenRouter API Test</h1>
+    <button onclick="testAPI()">Test API</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testAPI() {
+            const apiKey = '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';
+            const result = document.getElementById('result');
+            result.textContent = 'Testing...';
+
+            try {
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`,
+                        'HTTP-Referer': window.location.href,
+                        'X-Title': 'Crypto Trading Bot Test'
+                    },
+                    body: JSON.stringify({
+                        model: 'deepseek/deepseek-r1',
+                        messages: [
+                            {
+                                role: 'user',
+                                content: 'Analyze this: BTC price is $50000. Should I buy or sell? Give brief recommendation.'
+                            }
+                        ],
+                        max_tokens: 500
+                    })
+                });
+
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+
+                if (!response.ok) {
+                    result.textContent = `Error ${response.status}: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                result.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
