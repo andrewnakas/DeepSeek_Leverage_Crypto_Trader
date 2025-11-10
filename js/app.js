@@ -254,9 +254,16 @@ class App {
                 timestamp: Date.now()
             });
 
-            const isValid = await this.llmService.validateApiKey();
-            if (!isValid) {
-                throw new Error(`Failed to connect to ${provider}. Please check your API key${provider === 'ollama' ? ' and ensure Ollama is running (ollama serve)' : ''}.`);
+            try {
+                await this.llmService.validateApiKey();
+                this.addLogEntry({
+                    message: `✅ ${provider} connection validated successfully!`,
+                    type: 'success',
+                    timestamp: Date.now()
+                });
+            } catch (error) {
+                // Re-throw with more context
+                throw new Error(`${provider} validation failed: ${error.message}`);
             }
 
             // Initialize trading engine

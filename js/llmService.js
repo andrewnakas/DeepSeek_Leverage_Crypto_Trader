@@ -284,6 +284,7 @@ Format your response in a clear, structured way that can be easily parsed for au
                 });
                 return response.ok;
             } catch (error) {
+                console.error('Ollama validation error:', error);
                 return false;
             }
         }
@@ -296,23 +297,35 @@ Format your response in a clear, structured way that can be easily parsed for au
             if (this.provider === 'openrouter') {
                 headers['Authorization'] = `Bearer ${this.apiKey}`;
                 headers['HTTP-Referer'] = window.location.href;
+                headers['X-Title'] = 'DeepSeek Crypto Trader';
             } else {
                 headers['Authorization'] = `Bearer ${this.apiKey}`;
             }
+
+            console.log(`Validating ${this.provider} with model: ${this.model}`);
+            console.log('Headers:', { ...headers, Authorization: headers.Authorization ? 'Bearer ***' : 'none' });
 
             const response = await fetch(`${this.baseUrl}/chat/completions`, {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({
                     model: this.model,
-                    messages: [{ role: 'user', content: 'Hello' }],
-                    max_tokens: 5
+                    messages: [{ role: 'user', content: 'Hi' }],
+                    max_tokens: 10
                 })
             });
 
-            return response.ok;
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error(`${this.provider} validation failed:`, response.status, errorData);
+                throw new Error(`API returned ${response.status}: ${errorData.error?.message || response.statusText}`);
+            }
+
+            console.log(`${this.provider} validation successful!`);
+            return true;
         } catch (error) {
-            return false;
+            console.error(`${this.provider} validation error:`, error);
+            throw error; // Throw the error instead of returning false
         }
     }
 
